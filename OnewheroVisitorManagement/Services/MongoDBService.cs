@@ -17,7 +17,7 @@ namespace OnewheroVisitorManagement.Services
 
         public MongoDBService()
         {
-            // ⚠️ IMPORTANT: Replace with YOUR connection string from MongoDB Atlas
+            
             string connectionString = "mongodb+srv://onewhero_admin:Shishir.Kandel1@cluster0.3lvwypx.mongodb.net/?appName=Cluster0";
 
             var client = new MongoClient(connectionString);
@@ -103,18 +103,18 @@ namespace OnewheroVisitorManagement.Services
 
         public async Task<string> CreateBookingAsync(Booking booking)
         {
-            // Check if seats are available
+            
             var evt = await GetEventByIdAsync(booking.EventId);
             if (evt != null && evt.AvailableSeats >= booking.NumberOfTickets)
             {
-                // Update available seats
+                
                 evt.AvailableSeats -= booking.NumberOfTickets;
                 await UpdateEventAsync(evt.Id, evt);
 
-                // Create booking
+                
                 await _bookings.InsertOneAsync(booking);
 
-                // Update visitor visit count
+                
                 var visitor = await GetVisitorByIdAsync(booking.VisitorId);
                 if (visitor != null)
                 {
@@ -149,7 +149,7 @@ namespace OnewheroVisitorManagement.Services
             {
                 booking.Status = "Cancelled";
 
-                // Return seats to event
+                
                 var evt = await GetEventByIdAsync(booking.EventId);
                 if (evt != null)
                 {
@@ -181,7 +181,7 @@ namespace OnewheroVisitorManagement.Services
             return await _attractions.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        // ==================== ANALYTICS ====================
+        
 
         public async Task<Dictionary<string, int>> GetVisitorDemographicsAsync()
         {

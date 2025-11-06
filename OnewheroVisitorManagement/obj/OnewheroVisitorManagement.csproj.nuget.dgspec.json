@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Users\\270633519\\OneDrive - UP Education\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj": {}
+    "D:\\Users\\270633519\\Downloads\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj": {}
   },
   "projects": {
-    "D:\\Users\\270633519\\OneDrive - UP Education\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj": {
+    "D:\\Users\\270633519\\Downloads\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Users\\270633519\\OneDrive - UP Education\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj",
+        "projectUniqueName": "D:\\Users\\270633519\\Downloads\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj",
         "projectName": "OnewheroVisitorManagement",
-        "projectPath": "D:\\Users\\270633519\\OneDrive - UP Education\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj",
+        "projectPath": "D:\\Users\\270633519\\Downloads\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement.csproj",
         "packagesPath": "D:\\Users\\270633519\\.nuget\\packages\\",
-        "outputPath": "D:\\Users\\270633519\\OneDrive - UP Education\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\obj\\",
+        "outputPath": "D:\\Users\\270633519\\Downloads\\Onewherovisitormanagement\\OnewheroVisitorManagement\\OnewheroVisitorManagement\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

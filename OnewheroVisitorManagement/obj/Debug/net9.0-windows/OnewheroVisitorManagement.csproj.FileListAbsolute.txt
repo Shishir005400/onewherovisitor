@@ -26,3 +26,32 @@ D:\Users\270633519\OneDrive - UP Education\Onewherovisitormanagement\OnewheroVis
 D:\Users\270633519\OneDrive - UP Education\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.pdb
 D:\Users\270633519\OneDrive - UP Education\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.genruntimeconfig.cache
 D:\Users\270633519\OneDrive - UP Education\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\ref\OnewheroVisitorManagement.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\OnewheroVisitorManagement.exe
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\OnewheroVisitorManagement.deps.json
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\OnewheroVisitorManagement.runtimeconfig.json
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\OnewheroVisitorManagement.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\OnewheroVisitorManagement.pdb
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\DnsClient.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\Microsoft.Extensions.Logging.Abstractions.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\MongoDB.Bson.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\MongoDB.Driver.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\SharpCompress.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\Snappier.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\bin\Debug\net9.0-windows\ZstdSharp.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.csproj.AssemblyReference.cache
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\MainWindow.baml
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\MainWindow.g.cs
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\App.g.cs
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement_MarkupCompile.cache
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.g.resources
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.GeneratedMSBuildEditorConfig.editorconfig
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.AssemblyInfoInputs.cache
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.AssemblyInfo.cs
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.csproj.CoreCompileInputs.cache
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.sourcelink.json
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\Onewhero.DE18F143.Up2Date
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\refint\OnewheroVisitorManagement.dll
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.pdb
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\OnewheroVisitorManagement.genruntimeconfig.cache
+D:\Users\270633519\Downloads\Onewherovisitormanagement\OnewheroVisitorManagement\OnewheroVisitorManagement\obj\Debug\net9.0-windows\ref\OnewheroVisitorManagement.dll

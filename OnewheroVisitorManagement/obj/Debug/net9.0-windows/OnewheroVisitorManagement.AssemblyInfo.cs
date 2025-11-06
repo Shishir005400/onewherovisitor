@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("OnewheroVisitorManagement")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+5764cc2a5cbb320932df8e4cdc813b9336cc3b0d")]
 [assembly: System.Reflection.AssemblyProductAttribute("OnewheroVisitorManagement")]
 [assembly: System.Reflection.AssemblyTitleAttribute("OnewheroVisitorManagement")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
