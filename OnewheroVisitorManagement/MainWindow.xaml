@@ -1,0 +1,507 @@
+﻿<Window x:Class="OnewheroVisitorManagement.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Onewhero Bay Heritage Park - Visitor Management" 
+        Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen"
+        Background="#F5F5F5">
+
+    <!-- Window Resources (Styles) -->
+    <Window.Resources>
+        <Style x:Key="NavButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,15"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#34495E"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="PrimaryButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#3498DB"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="20,10"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#2980B9"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="InputTextBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="35"/>
+            <Setter Property="Padding" Value="10,8"/>
+            <Setter Property="Margin" Value="0,0,0,15"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="BorderBrush" Value="#BDC3C7"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="250"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Sidebar Navigation -->
+        <Border Grid.Column="0" Background="#2C3E50" Padding="0">
+            <StackPanel>
+                <!-- Logo Area -->
+                <Border Background="#1A252F" Padding="20" Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="🏛️ Onewhero Bay" 
+                                   FontSize="18" 
+                                   FontWeight="Bold" 
+                                   Foreground="White"
+                                   TextAlignment="Center"/>
+                        <TextBlock Text="Heritage Park" 
+                                   FontSize="14" 
+                                   Foreground="#BDC3C7"
+                                   TextAlignment="Center"
+                                   Margin="0,5,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Navigation Buttons -->
+                <Button x:Name="btnDashboard" 
+                        Content="📊 Dashboard" 
+                        Click="btnDashboard_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
+
+                <Button x:Name="btnVisitors" 
+                        Content="👥 Visitors" 
+                        Click="btnVisitors_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
+
+                <Button x:Name="btnEvents" 
+                        Content="🎫 Events" 
+                        Click="btnEvents_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
+
+                <Button x:Name="btnBookings" 
+                        Content="📅 Bookings" 
+                        Click="btnBookings_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
+
+                <Button x:Name="btnAttractions" 
+                        Content="🦜 Attractions" 
+                        Click="btnAttractions_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
+
+                <Button x:Name="btnAnalytics" 
+                        Content="📈 Analytics" 
+                        Click="btnAnalytics_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Main Content Area -->
+        <Grid Grid.Column="1" Margin="20">
+            <!-- Dashboard View -->
+            <Grid x:Name="DashboardView" Visibility="Visible">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Dashboard" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                        <!-- Statistics Cards -->
+                        <UniformGrid Columns="3" Rows="1" Margin="0,0,0,30">
+                            <Border Background="White" Margin="0,0,10,0" Padding="20" CornerRadius="5">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                                </Border.Effect>
+                                <StackPanel>
+                                    <TextBlock Text="👥 Total Visitors" FontSize="14" Foreground="#7F8C8D"/>
+                                    <TextBlock x:Name="txtTotalVisitors" Text="0" FontSize="32" FontWeight="Bold" Foreground="#2C3E50" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="White" Margin="5,0,5,0" Padding="20" CornerRadius="5">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                                </Border.Effect>
+                                <StackPanel>
+                                    <TextBlock Text="🎫 Active Events" FontSize="14" Foreground="#7F8C8D"/>
+                                    <TextBlock x:Name="txtActiveEvents" Text="0" FontSize="32" FontWeight="Bold" Foreground="#27AE60" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Border>
+
+                            <Border Background="White" Margin="10,0,0,0" Padding="20" CornerRadius="5">
+                                <Border.Effect>
+                                    <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                                </Border.Effect>
+                                <StackPanel>
+                                    <TextBlock Text="📅 Total Bookings" FontSize="14" Foreground="#7F8C8D"/>
+                                    <TextBlock x:Name="txtTotalBookings" Text="0" FontSize="32" FontWeight="Bold" Foreground="#E74C3C" Margin="0,10,0,0"/>
+                                </StackPanel>
+                            </Border>
+                        </UniformGrid>
+
+                        <TextBlock Text="Welcome to Onewhero Bay Heritage Park Management System" 
+                                   FontSize="16" 
+                                   Foreground="#7F8C8D"
+                                   TextWrapping="Wrap"
+                                   Margin="0,20,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Visitors View -->
+            <Grid x:Name="VisitorsView" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Visitor Management" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <!-- Add Visitor Form -->
+                <Border Grid.Row="1" Background="White" Padding="20" Margin="0,0,0,20" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="Register New Visitor" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBox x:Name="txtFirstName" Grid.Row="0" Grid.Column="0" 
+                                     Tag="First Name" Style="{StaticResource InputTextBoxStyle}"/>
+                            <TextBox x:Name="txtLastName" Grid.Row="0" Grid.Column="2" 
+                                     Tag="Last Name" Style="{StaticResource InputTextBoxStyle}"/>
+
+                            <TextBox x:Name="txtEmail" Grid.Row="1" Grid.Column="0" 
+                                     Tag="Email" Style="{StaticResource InputTextBoxStyle}"/>
+                            <TextBox x:Name="txtPhone" Grid.Row="1" Grid.Column="2" 
+                                     Tag="Phone" Style="{StaticResource InputTextBoxStyle}"/>
+
+                            <TextBox x:Name="txtAddress" Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" 
+                                     Tag="Address" Style="{StaticResource InputTextBoxStyle}"/>
+
+                            <StackPanel Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Orientation="Horizontal" Margin="0,10,0,0">
+                                <TextBlock Text="Interests:" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                                <CheckBox x:Name="chkMuseum" Content="Museum" Margin="0,0,15,0"/>
+                                <CheckBox x:Name="chkKiwiHouse" Content="Kiwi House" Margin="0,0,15,0"/>
+                                <CheckBox x:Name="chkBirds" Content="Native Birds" Margin="0,0,15,0"/>
+                                <CheckBox x:Name="chkReptiles" Content="Reptiles" Margin="0,0,15,0"/>
+                                <CheckBox x:Name="chkMarae" Content="Marae" Margin="0,0,15,0"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <Button x:Name="btnAddVisitor" 
+                                Content="Register Visitor" 
+                                Click="btnAddVisitor_Click"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Margin="0,20,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Visitors List -->
+                <Border Grid.Row="2" Background="White" Padding="20" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Registered Visitors" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <DataGrid x:Name="dgVisitors" 
+                                  Grid.Row="1"
+                                  AutoGenerateColumns="False" 
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  Background="White"
+                                  AlternatingRowBackground="#F9F9F9">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="First Name" Binding="{Binding FirstName}" Width="*"/>
+                                <DataGridTextColumn Header="Last Name" Binding="{Binding LastName}" Width="*"/>
+                                <DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="*"/>
+                                <DataGridTextColumn Header="Phone" Binding="{Binding Phone}" Width="*"/>
+                                <DataGridTextColumn Header="Visit Count" Binding="{Binding VisitCount}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Events View -->
+            <Grid x:Name="EventsView" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Event Management" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <!-- Add Event Form -->
+                <Border Grid.Row="1" Background="White" Padding="20" Margin="0,0,0,20" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="Create New Event" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+
+                            <TextBox x:Name="txtEventName" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+                                     Tag="Event Name" Style="{StaticResource InputTextBoxStyle}"/>
+
+                            <TextBox x:Name="txtEventDescription" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                     Tag="Description" Style="{StaticResource InputTextBoxStyle}" Height="60" TextWrapping="Wrap" AcceptsReturn="True"/>
+
+                            <DatePicker x:Name="dpEventDate" Grid.Row="2" Grid.Column="0" 
+                                        Margin="0,0,0,15" Height="35"/>
+                            <ComboBox x:Name="cmbEventType" Grid.Row="2" Grid.Column="2" 
+                                      Height="35" Margin="0,0,0,15">
+                                <ComboBoxItem Content="Exhibition"/>
+                                <ComboBoxItem Content="Animal Encounter"/>
+                                <ComboBoxItem Content="Guided Tour"/>
+                                <ComboBoxItem Content="Workshop"/>
+                                <ComboBoxItem Content="Cultural Event"/>
+                            </ComboBox>
+
+                            <TextBox x:Name="txtCapacity" Grid.Row="3" Grid.Column="0" 
+                                     Tag="Capacity" Style="{StaticResource InputTextBoxStyle}"/>
+                            <TextBox x:Name="txtTicketPrice" Grid.Row="3" Grid.Column="2" 
+                                     Tag="Ticket Price ($)" Style="{StaticResource InputTextBoxStyle}"/>
+                        </Grid>
+
+                        <Button x:Name="btnAddEvent" 
+                                Content="Create Event" 
+                                Click="btnAddEvent_Click"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Margin="0,20,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Events List -->
+                <Border Grid.Row="2" Background="White" Padding="20" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="Upcoming Events" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <DataGrid x:Name="dgEvents" 
+                                  Grid.Row="1"
+                                  AutoGenerateColumns="False" 
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  Background="White"
+                                  AlternatingRowBackground="#F9F9F9">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Event Name" Binding="{Binding EventName}" Width="*"/>
+                                <DataGridTextColumn Header="Date" Binding="{Binding EventDate, StringFormat=dd/MM/yyyy}" Width="Auto"/>
+                                <DataGridTextColumn Header="Type" Binding="{Binding EventType}" Width="Auto"/>
+                                <DataGridTextColumn Header="Available Seats" Binding="{Binding AvailableSeats}" Width="Auto"/>
+                                <DataGridTextColumn Header="Price" Binding="{Binding TicketPrice, StringFormat=C}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Bookings View -->
+            <Grid x:Name="BookingsView" Visibility="Collapsed">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <TextBlock Grid.Row="0" Text="Booking Management" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                <!-- Create Booking Form -->
+                <Border Grid.Row="1" Background="White" Padding="20" Margin="0,0,0,20" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                    </Border.Effect>
+                    <StackPanel>
+                        <TextBlock Text="Create New Booking" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="20"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <ComboBox x:Name="cmbVisitor" Grid.Column="0" 
+                                      DisplayMemberPath="Email"
+                                      Height="35" Margin="0,0,0,15"/>
+
+                            <ComboBox x:Name="cmbEvent" Grid.Column="2" 
+                                      DisplayMemberPath="EventName"
+                                      Height="35" Margin="0,0,0,15"
+                                      SelectionChanged="cmbEvent_SelectionChanged"/>
+                        </Grid>
+
+                        <TextBox x:Name="txtNumTickets" Tag="Number of Tickets" 
+                                 Style="{StaticResource InputTextBoxStyle}"
+                                 TextChanged="txtNumTickets_TextChanged"/>
+
+                        <TextBlock x:Name="txtTotalPrice" Text="Total: $0.00" 
+                                   FontSize="16" FontWeight="Bold" 
+                                   Margin="0,10,0,0"/>
+
+                        <Button x:Name="btnCreateBooking" 
+                                Content="Create Booking" 
+                                Click="btnCreateBooking_Click"
+                                Style="{StaticResource PrimaryButtonStyle}"
+                                Margin="0,20,0,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Bookings List -->
+                <Border Grid.Row="2" Background="White" Padding="20" CornerRadius="5">
+                    <Border.Effect>
+                        <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                    </Border.Effect>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Text="All Bookings" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+
+                        <DataGrid x:Name="dgBookings" 
+                                  Grid.Row="1"
+                                  AutoGenerateColumns="False" 
+                                  IsReadOnly="True"
+                                  CanUserAddRows="False"
+                                  Background="White"
+                                  AlternatingRowBackground="#F9F9F9">
+                            <DataGrid.Columns>
+                                <DataGridTextColumn Header="Booking Date" Binding="{Binding BookingDate, StringFormat=dd/MM/yyyy}" Width="Auto"/>
+                                <DataGridTextColumn Header="Tickets" Binding="{Binding NumberOfTickets}" Width="Auto"/>
+                                <DataGridTextColumn Header="Total Amount" Binding="{Binding TotalAmount, StringFormat=C}" Width="Auto"/>
+                                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="Auto"/>
+                            </DataGrid.Columns>
+                        </DataGrid>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- Attractions View -->
+            <Grid x:Name="AttractionsView" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Attractions" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                        <Border Background="White" Padding="20" CornerRadius="5">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock Text="🏛️ Museum" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Explore the rich heritage and history of the Northland region" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                                <TextBlock Text="🥝 Nocturnal Kiwi House" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Experience New Zealand's iconic kiwi in a naturalistic night-time environment" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                                <TextBlock Text="🦜 Native Bird Exhibits" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Discover unique New Zealand bird species in beautiful natural habitats" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                                <TextBlock Text="🦎 Reptile Exhibits" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Learn about New Zealand's fascinating reptilian inhabitants" TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+                                <TextBlock Text="🏛️ Traditional Marae" FontSize="20" FontWeight="Bold" Margin="0,0,0,10"/>
+                                <TextBlock Text="Experience authentic Māori culture and traditions" TextWrapping="Wrap"/>
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Analytics View -->
+            <Grid x:Name="AnalyticsView" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Analytics and Reports" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                        <Border Background="White" Padding="20" Margin="0,0,0,20" CornerRadius="5">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                            </Border.Effect>
+                            <StackPanel>
+                                <TextBlock Text="Visitor Demographics" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
+                                <TextBlock x:Name="txtDemographics" 
+                                           Text="Loading demographics..." 
+                                           TextWrapping="Wrap"
+                                           LineHeight="25"/>
+                            </StackPanel>
+                        </Border>
+
+                        <Button Content="Refresh Analytics" 
+                                Click="btnRefreshAnalytics_Click"
+                                Style="{StaticResource PrimaryButtonStyle}"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+        </Grid>
+    </Grid>
+</Window>
