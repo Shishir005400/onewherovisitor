@@ -8,19 +8,19 @@ namespace OnewheroVisitorManagement.Models
     {
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
-        public string Id { get; set; }
+        public string Id { get; set; } = string.Empty;
 
         [BsonElement("eventName")]
-        public string EventName { get; set; }
+        public string EventName { get; set; } = string.Empty;
 
         [BsonElement("description")]
-        public string Description { get; set; }
+        public string Description { get; set; } = string.Empty;
+
+        [BsonElement("eventType")]
+        public string EventType { get; set; } = string.Empty;
 
         [BsonElement("eventDate")]
         public DateTime EventDate { get; set; }
-
-        [BsonElement("eventType")]
-        public string EventType { get; set; } 
 
         [BsonElement("capacity")]
         public int Capacity { get; set; }
@@ -33,5 +33,7 @@ namespace OnewheroVisitorManagement.Models
 
         [BsonElement("isActive")]
         public bool IsActive { get; set; }
+
+        public string FormattedDate => EventDate.ToString("dd/MM/yyyy");
     }
 }

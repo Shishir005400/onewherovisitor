@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using OnewheroVisitorManagement.Models;
 using OnewheroVisitorManagement.Services;
 
@@ -19,6 +20,10 @@ namespace OnewheroVisitorManagement
             try
             {
                 _dbService = new MongoDBService();
+
+                // Initialize placeholders for all TextBoxes
+                InitializePlaceholders();
+
                 LoadDashboardData();
             }
             catch (Exception ex)
@@ -28,6 +33,66 @@ namespace OnewheroVisitorManagement
                     MessageBoxButton.OK,
                     MessageBoxImage.Error);
             }
+        }
+
+       
+
+        private void InitializePlaceholders()
+        {
+            // Visitor form placeholders
+            SetPlaceholder(txtFirstName, "First Name");
+            SetPlaceholder(txtLastName, "Last Name");
+            SetPlaceholder(txtEmail, "Email");
+            SetPlaceholder(txtPhone, "Phone");
+            SetPlaceholder(txtAddress, "Address");
+
+            // Event form placeholders
+            SetPlaceholder(txtEventName, "Event Name");
+            SetPlaceholder(txtEventDescription, "Description");
+            SetPlaceholder(txtCapacity, "Capacity");
+            SetPlaceholder(txtTicketPrice, "Ticket Price ($)");
+
+            // Booking form placeholders
+            SetPlaceholder(txtNumTickets, "Number of Tickets");
+        }
+
+        private void SetPlaceholder(TextBox textBox, string placeholder)
+        {
+            if (textBox == null) return;
+
+            
+            if (string.IsNullOrEmpty(textBox.Text))
+            {
+                textBox.Text = placeholder;
+                textBox.Foreground = Brushes.Gray;
+            }
+
+            
+            textBox.GotFocus += (sender, e) =>
+            {
+                if (textBox.Text == placeholder)
+                {
+                    textBox.Text = "";
+                    textBox.Foreground = Brushes.Black;
+                }
+            };
+
+            
+            textBox.LostFocus += (sender, e) =>
+            {
+                if (string.IsNullOrWhiteSpace(textBox.Text))
+                {
+                    textBox.Text = placeholder;
+                    textBox.Foreground = Brushes.Gray;
+                }
+            };
+        }
+
+        private string GetTextBoxValue(TextBox textBox, string placeholder)
+        {
+            if (textBox.Text == placeholder || string.IsNullOrWhiteSpace(textBox.Text))
+                return "";
+            return textBox.Text.Trim();
         }
 
         // ==================== NAVIGATION ====================
@@ -119,10 +184,17 @@ namespace OnewheroVisitorManagement
         {
             try
             {
-                // Validation
-                if (string.IsNullOrWhiteSpace(txtFirstName.Text) ||
-                    string.IsNullOrWhiteSpace(txtLastName.Text) ||
-                    string.IsNullOrWhiteSpace(txtEmail.Text))
+                
+                string firstName = GetTextBoxValue(txtFirstName, "First Name");
+                string lastName = GetTextBoxValue(txtLastName, "Last Name");
+                string email = GetTextBoxValue(txtEmail, "Email");
+                string phone = GetTextBoxValue(txtPhone, "Phone");
+                string address = GetTextBoxValue(txtAddress, "Address");
+
+                
+                if (string.IsNullOrWhiteSpace(firstName) ||
+                    string.IsNullOrWhiteSpace(lastName) ||
+                    string.IsNullOrWhiteSpace(email))
                 {
                     MessageBox.Show("Please fill in all required fields: First Name, Last Name, and Email",
                         "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -132,11 +204,11 @@ namespace OnewheroVisitorManagement
                 // Create visitor object
                 var visitor = new Visitor
                 {
-                    FirstName = txtFirstName.Text.Trim(),
-                    LastName = txtLastName.Text.Trim(),
-                    Email = txtEmail.Text.Trim(),
-                    Phone = txtPhone.Text.Trim(),
-                    Address = txtAddress.Text.Trim(),
+                    FirstName = firstName,
+                    LastName = lastName,
+                    Email = email,
+                    Phone = phone,
+                    Address = address,
                     Interests = new List<string>()
                 };
 
@@ -155,10 +227,10 @@ namespace OnewheroVisitorManagement
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                // Clear form
+                
                 ClearVisitorForm();
 
-                // Reload grid
+                
                 LoadVisitors();
 
                 // Update dashboard
@@ -173,11 +245,23 @@ namespace OnewheroVisitorManagement
 
         private void ClearVisitorForm()
         {
-            txtFirstName.Clear();
-            txtLastName.Clear();
-            txtEmail.Clear();
-            txtPhone.Clear();
-            txtAddress.Clear();
+            SetPlaceholder(txtFirstName, "First Name");
+            SetPlaceholder(txtLastName, "Last Name");
+            SetPlaceholder(txtEmail, "Email");
+            SetPlaceholder(txtPhone, "Phone");
+            SetPlaceholder(txtAddress, "Address");
+
+            txtFirstName.Text = "First Name";
+            txtFirstName.Foreground = Brushes.Gray;
+            txtLastName.Text = "Last Name";
+            txtLastName.Foreground = Brushes.Gray;
+            txtEmail.Text = "Email";
+            txtEmail.Foreground = Brushes.Gray;
+            txtPhone.Text = "Phone";
+            txtPhone.Foreground = Brushes.Gray;
+            txtAddress.Text = "Address";
+            txtAddress.Foreground = Brushes.Gray;
+
             chkMuseum.IsChecked = false;
             chkKiwiHouse.IsChecked = false;
             chkBirds.IsChecked = false;
@@ -205,8 +289,14 @@ namespace OnewheroVisitorManagement
         {
             try
             {
-                // Validation
-                if (string.IsNullOrWhiteSpace(txtEventName.Text) ||
+                
+                string eventName = GetTextBoxValue(txtEventName, "Event Name");
+                string description = GetTextBoxValue(txtEventDescription, "Description");
+                string capacityStr = GetTextBoxValue(txtCapacity, "Capacity");
+                string ticketPriceStr = GetTextBoxValue(txtTicketPrice, "Ticket Price ($)");
+
+                
+                if (string.IsNullOrWhiteSpace(eventName) ||
                     dpEventDate.SelectedDate == null ||
                     cmbEventType.SelectedItem == null)
                 {
@@ -218,14 +308,14 @@ namespace OnewheroVisitorManagement
                 int capacity = 0;
                 decimal ticketPrice = 0;
 
-                if (!int.TryParse(txtCapacity.Text, out capacity) || capacity <= 0)
+                if (string.IsNullOrWhiteSpace(capacityStr) || !int.TryParse(capacityStr, out capacity) || capacity <= 0)
                 {
                     MessageBox.Show("Please enter a valid capacity (positive number)",
                         "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
 
-                if (!decimal.TryParse(txtTicketPrice.Text, out ticketPrice) || ticketPrice < 0)
+                if (string.IsNullOrWhiteSpace(ticketPriceStr) || !decimal.TryParse(ticketPriceStr, out ticketPrice) || ticketPrice < 0)
                 {
                     MessageBox.Show("Please enter a valid ticket price (0 or greater)",
                         "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -235,8 +325,8 @@ namespace OnewheroVisitorManagement
                 // Create event object
                 var evt = new Event
                 {
-                    EventName = txtEventName.Text.Trim(),
-                    Description = txtEventDescription.Text.Trim(),
+                    EventName = eventName,
+                    Description = description,
                     EventDate = dpEventDate.SelectedDate.Value,
                     EventType = (cmbEventType.SelectedItem as ComboBoxItem).Content.ToString(),
                     Capacity = capacity,
@@ -271,12 +361,17 @@ namespace OnewheroVisitorManagement
 
         private void ClearEventForm()
         {
-            txtEventName.Clear();
-            txtEventDescription.Clear();
+            txtEventName.Text = "Event Name";
+            txtEventName.Foreground = Brushes.Gray;
+            txtEventDescription.Text = "Description";
+            txtEventDescription.Foreground = Brushes.Gray;
+            txtCapacity.Text = "Capacity";
+            txtCapacity.Foreground = Brushes.Gray;
+            txtTicketPrice.Text = "Ticket Price ($)";
+            txtTicketPrice.Foreground = Brushes.Gray;
+
             dpEventDate.SelectedDate = null;
             cmbEventType.SelectedIndex = -1;
-            txtCapacity.Clear();
-            txtTicketPrice.Clear();
         }
 
         // ==================== BOOKINGS ====================
@@ -300,10 +395,23 @@ namespace OnewheroVisitorManagement
             try
             {
                 var visitors = await _dbService.GetAllVisitorsAsync();
-                var events = await _dbService.GetActiveEventsAsync();
+                var events = await _dbService.GetAllEventsAsync(); 
 
                 cmbVisitor.ItemsSource = visitors;
                 cmbEvent.ItemsSource = events;
+
+                
+                if (visitors.Count == 0)
+                {
+                    MessageBox.Show("No visitors found! Please register visitors first in the Visitors section.",
+                        "No Visitors", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+
+                if (events.Count == 0)
+                {
+                    MessageBox.Show("No events found! Please create events first in the Events section.",
+                        "No Events", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
             }
             catch (Exception ex)
             {
@@ -324,10 +432,12 @@ namespace OnewheroVisitorManagement
 
         private void UpdateTotalPrice()
         {
-            if (cmbEvent.SelectedItem != null && !string.IsNullOrWhiteSpace(txtNumTickets.Text))
+            string numTicketsStr = GetTextBoxValue(txtNumTickets, "Number of Tickets");
+
+            if (cmbEvent.SelectedItem != null && !string.IsNullOrWhiteSpace(numTicketsStr))
             {
                 int numTickets = 0;
-                if (int.TryParse(txtNumTickets.Text, out numTickets) && numTickets > 0)
+                if (int.TryParse(numTicketsStr, out numTickets) && numTickets > 0)
                 {
                     var selectedEvent = cmbEvent.SelectedItem as Event;
                     decimal total = selectedEvent.TicketPrice * numTickets;
@@ -356,8 +466,10 @@ namespace OnewheroVisitorManagement
                     return;
                 }
 
+                string numTicketsStr = GetTextBoxValue(txtNumTickets, "Number of Tickets");
                 int numTickets = 0;
-                if (!int.TryParse(txtNumTickets.Text, out numTickets) || numTickets <= 0)
+
+                if (string.IsNullOrWhiteSpace(numTicketsStr) || !int.TryParse(numTicketsStr, out numTickets) || numTickets <= 0)
                 {
                     MessageBox.Show("Please enter a valid number of tickets (positive number)",
                         "Validation Error", MessageBoxButton.OK, MessageBoxImage.Warning);
@@ -418,7 +530,9 @@ namespace OnewheroVisitorManagement
         {
             cmbVisitor.SelectedIndex = -1;
             cmbEvent.SelectedIndex = -1;
-            txtNumTickets.Clear();
+
+            txtNumTickets.Text = "Number of Tickets";
+            txtNumTickets.Foreground = Brushes.Gray;
             txtTotalPrice.Text = "Total: $0.00";
         }
 

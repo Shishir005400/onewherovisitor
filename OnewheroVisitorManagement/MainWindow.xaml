@@ -6,7 +6,7 @@
         WindowStartupLocation="CenterScreen"
         Background="#F5F5F5">
 
-    <!-- Window Resources (Styles) -->
+    
     <Window.Resources>
         <Style x:Key="NavButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -354,7 +354,7 @@
                                   AlternatingRowBackground="#F9F9F9">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Event Name" Binding="{Binding EventName}" Width="*"/>
-                                <DataGridTextColumn Header="Date" Binding="{Binding EventDate, StringFormat=dd/MM/yyyy}" Width="Auto"/>
+                                <DataGridTextColumn Header="Date" Binding="{Binding FormattedDate}" Width="Auto"/>
                                 <DataGridTextColumn Header="Type" Binding="{Binding EventType}" Width="Auto"/>
                                 <DataGridTextColumn Header="Available Seats" Binding="{Binding AvailableSeats}" Width="Auto"/>
                                 <DataGridTextColumn Header="Price" Binding="{Binding TicketPrice, StringFormat=C}" Width="Auto"/>
