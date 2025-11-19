@@ -4,9 +4,10 @@
         Title="Onewhero Bay Heritage Park - Visitor Management" 
         Height="700" Width="1200"
         WindowStartupLocation="CenterScreen"
-        Background="#F5F5F5">
+        Background="#F5F5F5"
+        Closing="Window_Closing">
 
-    
+
     <Window.Resources>
         <Style x:Key="NavButtonStyle" TargetType="Button">
             <Setter Property="Background" Value="Transparent"/>
@@ -58,6 +59,56 @@
             </Style.Triggers>
         </Style>
 
+        <Style x:Key="DangerButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#E74C3C"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#C0392B"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+        <Style x:Key="SuccessButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="#27AE60"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="15,8"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="Cursor" Value="Hand"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border Background="{TemplateBinding Background}" 
+                                Padding="{TemplateBinding Padding}"
+                                CornerRadius="3">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsMouseOver" Value="True">
+                    <Setter Property="Background" Value="#229954"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
         <Style x:Key="InputTextBoxStyle" TargetType="TextBox">
             <Setter Property="Height" Value="35"/>
             <Setter Property="Padding" Value="10,8"/>
@@ -77,6 +128,50 @@
         <!-- Sidebar Navigation -->
         <Border Grid.Column="0" Background="#2C3E50" Padding="0">
             <StackPanel>
+                <!-- Profile Section -->
+                <Border Background="#1A252F" Padding="20" Margin="0,0,0,10">
+                    <StackPanel>
+                        <Ellipse Width="60" Height="60" Fill="#3498DB" Margin="0,0,0,10">
+                            <Ellipse.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.3"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <TextBlock x:Name="txtUserName" 
+                                   Text="Admin User" 
+                                   FontSize="16" 
+                                   FontWeight="Bold" 
+                                   Foreground="White"
+                                   TextAlignment="Center"/>
+                        <TextBlock x:Name="txtUserRole" 
+                                   Text="Administrator" 
+                                   FontSize="12" 
+                                   Foreground="#BDC3C7"
+                                   TextAlignment="Center"
+                                   Margin="0,3,0,0"/>
+
+                        <Button x:Name="btnProfile" 
+                                Content="👤 My Profile" 
+                                Click="btnProfile_Click"
+                                Background="#34495E"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="10,8"
+                                Margin="0,15,0,5"
+                                Cursor="Hand"
+                                FontSize="12"/>
+
+                        <Button x:Name="btnLogout" 
+                                Content="🚪 Logout" 
+                                Click="btnLogout_Click"
+                                Background="#E74C3C"
+                                Foreground="White"
+                                BorderThickness="0"
+                                Padding="10,8"
+                                Cursor="Hand"
+                                FontSize="12"/>
+                    </StackPanel>
+                </Border>
+
                 <!-- Logo Area -->
                 <Border Background="#1A252F" Padding="20" Margin="0,0,0,20">
                     <StackPanel>
@@ -123,11 +218,16 @@
                         Content="📈 Analytics" 
                         Click="btnAnalytics_Click"
                         Style="{StaticResource NavButtonStyle}"/>
+
+                <Button x:Name="btnAdmin" 
+                        Content="⚙️ Admin Panel" 
+                        Click="btnAdmin_Click"
+                        Style="{StaticResource NavButtonStyle}"/>
             </StackPanel>
         </Border>
 
         <!-- Main Content Area -->
-        <Grid Grid.Column="1" Margin="20">
+        <Grid Grid.Column="1" Margin="20,20,0,10">
             <!-- Dashboard View -->
             <Grid x:Name="DashboardView" Visibility="Visible">
                 <ScrollViewer VerticalScrollBarVisibility="Auto">
@@ -172,6 +272,143 @@
                                    Foreground="#7F8C8D"
                                    TextWrapping="Wrap"
                                    Margin="0,20,0,0"/>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Profile View -->
+            <Grid x:Name="ProfileView" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="My Profile" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                        <Border Background="White" Padding="30" CornerRadius="5" Margin="0,0,0,20">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Profile Picture -->
+                                <Border Grid.Column="0" 
+                                        VerticalAlignment="Top"
+                                        Margin="0,0,30,0">
+                                    <Ellipse Width="120" Height="120" Fill="#3498DB">
+                                        <Ellipse.Effect>
+                                            <DropShadowEffect BlurRadius="15" ShadowDepth="3" Opacity="0.3"/>
+                                        </Ellipse.Effect>
+                                    </Ellipse>
+                                </Border>
+
+                                <!-- Profile Info -->
+                                <StackPanel Grid.Column="1">
+                                    <TextBlock Text="Account Information" 
+                                               FontSize="20" 
+                                               FontWeight="Bold" 
+                                               Foreground="#2C3E50"
+                                               Margin="0,0,0,20"/>
+
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="150"/>
+                                            <ColumnDefinition Width="*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
+
+                                        <TextBlock Grid.Row="0" Grid.Column="0" Text="Full Name:" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                                        <TextBlock x:Name="txtProfileFullName" Grid.Row="0" Grid.Column="1" Text="" Margin="0,0,0,15"/>
+
+                                        <TextBlock Grid.Row="1" Grid.Column="0" Text="Username:" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                                        <TextBlock x:Name="txtProfileUsername" Grid.Row="1" Grid.Column="1" Text="" Margin="0,0,0,15"/>
+
+                                        <TextBlock Grid.Row="2" Grid.Column="0" Text="Email:" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                                        <TextBlock x:Name="txtProfileEmail" Grid.Row="2" Grid.Column="1" Text="" Margin="0,0,0,15"/>
+
+                                        <TextBlock Grid.Row="3" Grid.Column="0" Text="Role:" FontWeight="SemiBold" Margin="0,0,0,15"/>
+                                        <TextBlock x:Name="txtProfileRole" Grid.Row="3" Grid.Column="1" Text="" Margin="0,0,0,15"/>
+
+                                        <TextBlock Grid.Row="4" Grid.Column="0" Text="Member Since:" FontWeight="SemiBold"/>
+                                        <TextBlock x:Name="txtProfileCreatedDate" Grid.Row="4" Grid.Column="1" Text=""/>
+                                    </Grid>
+                                </StackPanel>
+                            </Grid>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <!-- Admin Panel View -->
+            <Grid x:Name="AdminView" Visibility="Collapsed">
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <StackPanel>
+                        <TextBlock Text="Admin Panel - Event Management" FontSize="28" FontWeight="Bold" Margin="0,0,0,20"/>
+
+                        <!-- Events List with Edit/Delete -->
+                        <Border Background="White" Padding="20" CornerRadius="5">
+                            <Border.Effect>
+                                <DropShadowEffect BlurRadius="10" ShadowDepth="2" Opacity="0.2"/>
+                            </Border.Effect>
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
+
+                                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,15">
+                                    <TextBlock Text="All Events" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                                    <Button Content="🔄 Refresh" 
+                                            Click="btnRefreshAdminEvents_Click"
+                                            Style="{StaticResource PrimaryButtonStyle}"
+                                            Margin="20,0,0,0"
+                                            Padding="15,8"/>
+                                </StackPanel>
+
+                                <DataGrid x:Name="dgAdminEvents" 
+                                          Grid.Row="1"
+                                          AutoGenerateColumns="False" 
+                                          IsReadOnly="True"
+                                          CanUserAddRows="False"
+                                          Background="White"
+                                          AlternatingRowBackground="#F9F9F9"
+                                          SelectionMode="Single">
+                                    <DataGrid.Columns>
+                                        <DataGridTextColumn Header="Event Name" Binding="{Binding EventName}" Width="*"/>
+                                        <DataGridTextColumn Header="Date" Binding="{Binding FormattedDate}" Width="Auto"/>
+                                        <DataGridTextColumn Header="Type" Binding="{Binding EventType}" Width="Auto"/>
+                                        <DataGridTextColumn Header="Capacity" Binding="{Binding Capacity}" Width="Auto"/>
+                                        <DataGridTextColumn Header="Available" Binding="{Binding AvailableSeats}" Width="Auto"/>
+                                        <DataGridTextColumn Header="Price" Binding="{Binding TicketPrice, StringFormat=C}" Width="Auto"/>
+                                        <DataGridCheckBoxColumn Header="Active" Binding="{Binding IsActive}" Width="Auto"/>
+                                        <DataGridTemplateColumn Header="Actions" Width="200">
+                                            <DataGridTemplateColumn.CellTemplate>
+                                                <DataTemplate>
+                                                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                        <Button Content="✏️ Edit" 
+                                                                Click="btnEditEvent_Click"
+                                                                Style="{StaticResource SuccessButtonStyle}"
+                                                                Margin="0,0,5,0"
+                                                                Tag="{Binding Id}"/>
+                                                        <Button Content="🗑️ Delete" 
+                                                                Click="btnDeleteEvent_Click"
+                                                                Style="{StaticResource DangerButtonStyle}"
+                                                                Tag="{Binding Id}"/>
+                                                    </StackPanel>
+                                                </DataTemplate>
+                                            </DataGridTemplateColumn.CellTemplate>
+                                        </DataGridTemplateColumn>
+                                    </DataGrid.Columns>
+                                </DataGrid>
+                            </Grid>
+                        </Border>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>
@@ -381,7 +618,6 @@
                     </Border.Effect>
                     <StackPanel>
                         <TextBlock Text="Create New Booking" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
-
                         <Grid>
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
@@ -390,28 +626,28 @@
                             </Grid.ColumnDefinitions>
 
                             <ComboBox x:Name="cmbVisitor" Grid.Column="0" 
-                                      DisplayMemberPath="Email"
-                                      Height="35" Margin="0,0,0,15"/>
+                                  DisplayMemberPath="Email"
+                                  Height="35" Margin="0,0,0,15"/>
 
                             <ComboBox x:Name="cmbEvent" Grid.Column="2" 
-                                      DisplayMemberPath="EventName"
-                                      Height="35" Margin="0,0,0,15"
-                                      SelectionChanged="cmbEvent_SelectionChanged"/>
+                                  DisplayMemberPath="EventName"
+                                  Height="35" Margin="0,0,0,15"
+                                  SelectionChanged="cmbEvent_SelectionChanged"/>
                         </Grid>
 
                         <TextBox x:Name="txtNumTickets" Tag="Number of Tickets" 
-                                 Style="{StaticResource InputTextBoxStyle}"
-                                 TextChanged="txtNumTickets_TextChanged"/>
+                             Style="{StaticResource InputTextBoxStyle}"
+                             TextChanged="txtNumTickets_TextChanged"/>
 
                         <TextBlock x:Name="txtTotalPrice" Text="Total: $0.00" 
-                                   FontSize="16" FontWeight="Bold" 
-                                   Margin="0,10,0,0"/>
+                               FontSize="16" FontWeight="Bold" 
+                               Margin="0,10,0,0"/>
 
                         <Button x:Name="btnCreateBooking" 
-                                Content="Create Booking" 
-                                Click="btnCreateBooking_Click"
-                                Style="{StaticResource PrimaryButtonStyle}"
-                                Margin="0,20,0,0"/>
+                            Content="Create Booking" 
+                            Click="btnCreateBooking_Click"
+                            Style="{StaticResource PrimaryButtonStyle}"
+                            Margin="0,20,0,0"/>
                     </StackPanel>
                 </Border>
 
@@ -429,12 +665,12 @@
                         <TextBlock Grid.Row="0" Text="All Bookings" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
 
                         <DataGrid x:Name="dgBookings" 
-                                  Grid.Row="1"
-                                  AutoGenerateColumns="False" 
-                                  IsReadOnly="True"
-                                  CanUserAddRows="False"
-                                  Background="White"
-                                  AlternatingRowBackground="#F9F9F9">
+                              Grid.Row="1"
+                              AutoGenerateColumns="False" 
+                              IsReadOnly="True"
+                              CanUserAddRows="False"
+                              Background="White"
+                              AlternatingRowBackground="#F9F9F9">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Booking Date" Binding="{Binding BookingDate, StringFormat=dd/MM/yyyy}" Width="Auto"/>
                                 <DataGridTextColumn Header="Tickets" Binding="{Binding NumberOfTickets}" Width="Auto"/>
@@ -490,15 +726,15 @@
                             <StackPanel>
                                 <TextBlock Text="Visitor Demographics" FontSize="18" FontWeight="Bold" Margin="0,0,0,15"/>
                                 <TextBlock x:Name="txtDemographics" 
-                                           Text="Loading demographics..." 
-                                           TextWrapping="Wrap"
-                                           LineHeight="25"/>
+                                       Text="Loading demographics..." 
+                                       TextWrapping="Wrap"
+                                       LineHeight="25"/>
                             </StackPanel>
                         </Border>
 
                         <Button Content="Refresh Analytics" 
-                                Click="btnRefreshAnalytics_Click"
-                                Style="{StaticResource PrimaryButtonStyle}"/>
+                            Click="btnRefreshAnalytics_Click"
+                            Style="{StaticResource PrimaryButtonStyle}"/>
                     </StackPanel>
                 </ScrollViewer>
             </Grid>

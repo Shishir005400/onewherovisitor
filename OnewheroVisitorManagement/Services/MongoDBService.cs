@@ -14,10 +14,10 @@ namespace OnewheroVisitorManagement.Services
         private readonly IMongoCollection<Event> _events;
         private readonly IMongoCollection<Booking> _bookings;
         private readonly IMongoCollection<Attraction> _attractions;
+        private readonly IMongoCollection<User> _users;
 
         public MongoDBService()
         {
-            
             string connectionString = "mongodb+srv://onewhero_admin:Shishir.Kandel1@cluster0.3lvwypx.mongodb.net/?appName=Cluster0";
 
             var client = new MongoClient(connectionString);
@@ -27,6 +27,7 @@ namespace OnewheroVisitorManagement.Services
             _events = _database.GetCollection<Event>("Events");
             _bookings = _database.GetCollection<Booking>("Bookings");
             _attractions = _database.GetCollection<Attraction>("Attractions");
+            _users = _database.GetCollection<User>("Users");
         }
 
         // ==================== VISITOR OPERATIONS ====================
@@ -103,18 +104,14 @@ namespace OnewheroVisitorManagement.Services
 
         public async Task<string> CreateBookingAsync(Booking booking)
         {
-            
             var evt = await GetEventByIdAsync(booking.EventId);
             if (evt != null && evt.AvailableSeats >= booking.NumberOfTickets)
             {
-                
                 evt.AvailableSeats -= booking.NumberOfTickets;
                 await UpdateEventAsync(evt.Id, evt);
 
-                
                 await _bookings.InsertOneAsync(booking);
 
-                
                 var visitor = await GetVisitorByIdAsync(booking.VisitorId);
                 if (visitor != null)
                 {
@@ -149,7 +146,6 @@ namespace OnewheroVisitorManagement.Services
             {
                 booking.Status = "Cancelled";
 
-                
                 var evt = await GetEventByIdAsync(booking.EventId);
                 if (evt != null)
                 {
@@ -181,7 +177,48 @@ namespace OnewheroVisitorManagement.Services
             return await _attractions.Find(a => a.Id == id).FirstOrDefaultAsync();
         }
 
-        
+        // ==================== USER OPERATIONS ====================
+
+        public async Task<User> AuthenticateUserAsync(string username, string password)
+        {
+            return await _users.Find(u => u.Username == username && u.Password == password && u.IsActive).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> UsernameExistsAsync(string username)
+        {
+            var user = await _users.Find(u => u.Username == username).FirstOrDefaultAsync();
+            return user != null;
+        }
+
+        public async Task<string> AddUserAsync(User user)
+        {
+            await _users.InsertOneAsync(user);
+            return user.Id;
+        }
+
+        public async Task<List<User>> GetAllUsersAsync()
+        {
+            return await _users.Find(_ => true).ToListAsync();
+        }
+
+        public async Task<User> GetUserByIdAsync(string id)
+        {
+            return await _users.Find(u => u.Id == id).FirstOrDefaultAsync();
+        }
+
+        public async Task<bool> UpdateUserAsync(string id, User user)
+        {
+            var result = await _users.ReplaceOneAsync(u => u.Id == id, user);
+            return result.ModifiedCount > 0;
+        }
+
+        public async Task<bool> DeleteUserAsync(string id)
+        {
+            var result = await _users.DeleteOneAsync(u => u.Id == id);
+            return result.DeletedCount > 0;
+        }
+
+        // ==================== ANALYTICS ====================
 
         public async Task<Dictionary<string, int>> GetVisitorDemographicsAsync()
         {

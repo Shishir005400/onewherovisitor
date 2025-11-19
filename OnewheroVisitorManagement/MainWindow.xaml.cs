@@ -12,6 +12,7 @@ namespace OnewheroVisitorManagement
     public partial class MainWindow : Window
     {
         private MongoDBService _dbService;
+        private Event _editingEvent = null;
 
         public MainWindow()
         {
@@ -24,6 +25,9 @@ namespace OnewheroVisitorManagement
                 // Initialize placeholders for all TextBoxes
                 InitializePlaceholders();
 
+                // Load user profile info
+                LoadUserProfile();
+
                 LoadDashboardData();
             }
             catch (Exception ex)
@@ -35,7 +39,18 @@ namespace OnewheroVisitorManagement
             }
         }
 
-       
+        private void LoadUserProfile()
+        {
+            if (SessionManager.IsLoggedIn)
+            {
+                var user = SessionManager.CurrentUser;
+                txtUserName.Text = user.FullName;
+                txtUserRole.Text = user.Role;
+
+                // Show/Hide admin button based on role
+                btnAdmin.Visibility = SessionManager.IsAdmin ? Visibility.Visible : Visibility.Collapsed;
+            }
+        }
 
         private void InitializePlaceholders()
         {
@@ -60,14 +75,12 @@ namespace OnewheroVisitorManagement
         {
             if (textBox == null) return;
 
-            
             if (string.IsNullOrEmpty(textBox.Text))
             {
                 textBox.Text = placeholder;
                 textBox.Foreground = Brushes.Gray;
             }
 
-            
             textBox.GotFocus += (sender, e) =>
             {
                 if (textBox.Text == placeholder)
@@ -77,7 +90,6 @@ namespace OnewheroVisitorManagement
                 }
             };
 
-            
             textBox.LostFocus += (sender, e) =>
             {
                 if (string.IsNullOrWhiteSpace(textBox.Text))
@@ -105,6 +117,8 @@ namespace OnewheroVisitorManagement
             BookingsView.Visibility = Visibility.Collapsed;
             AttractionsView.Visibility = Visibility.Collapsed;
             AnalyticsView.Visibility = Visibility.Collapsed;
+            ProfileView.Visibility = Visibility.Collapsed;
+            AdminView.Visibility = Visibility.Collapsed;
 
             viewToShow.Visibility = Visibility.Visible;
         }
@@ -143,6 +157,320 @@ namespace OnewheroVisitorManagement
         {
             ShowView(AnalyticsView);
             LoadAnalytics();
+        }
+
+        private void btnProfile_Click(object sender, RoutedEventArgs e)
+        {
+            ShowView(ProfileView);
+            LoadProfileView();
+        }
+
+        private void btnAdmin_Click(object sender, RoutedEventArgs e)
+        {
+            if (!SessionManager.IsAdmin)
+            {
+                MessageBox.Show("Access Denied. Admin privileges required.", "Access Denied",
+                    MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
+
+            ShowView(AdminView);
+            LoadAdminEvents();
+        }
+
+        private void btnLogout_Click(object sender, RoutedEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to logout?", "Confirm Logout",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.Yes)
+            {
+                SessionManager.Logout();
+                LoginWindow loginWindow = new LoginWindow();
+                loginWindow.Show();
+                this.Close();
+            }
+        }
+
+        private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            var result = MessageBox.Show("Are you sure you want to exit?", "Confirm Exit",
+                MessageBoxButton.YesNo, MessageBoxImage.Question);
+
+            if (result == MessageBoxResult.No)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        // ==================== PROFILE VIEW ====================
+
+        private void LoadProfileView()
+        {
+            if (SessionManager.IsLoggedIn)
+            {
+                var user = SessionManager.CurrentUser;
+                txtProfileFullName.Text = user.FullName;
+                txtProfileUsername.Text = user.Username;
+                txtProfileEmail.Text = user.Email;
+                txtProfileRole.Text = user.Role;
+                txtProfileCreatedDate.Text = user.CreatedDate.ToString("dd MMMM yyyy");
+            }
+        }
+
+        // ==================== ADMIN PANEL ====================
+
+        private async void LoadAdminEvents()
+        {
+            try
+            {
+                var events = await _dbService.GetAllEventsAsync();
+                dgAdminEvents.ItemsSource = events;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error loading events: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void btnRefreshAdminEvents_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAdminEvents();
+        }
+
+        private async void btnEditEvent_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var button = sender as Button;
+                string eventId = button.Tag.ToString();
+
+                var evt = await _dbService.GetEventByIdAsync(eventId);
+                if (evt == null)
+                {
+                    MessageBox.Show("Event not found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                    return;
+                }
+
+                // Create edit dialog
+                Window editWindow = new Window
+                {
+                    Title = "Edit Event",
+                    Width = 500,
+                    Height = 600,
+                    WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                    Background = new SolidColorBrush(Color.FromRgb(245, 245, 245))
+                };
+
+                var grid = new Grid { Margin = new Thickness(20) };
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+                grid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(1, GridUnitType.Star) });
+                grid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+
+                // Title
+                var title = new TextBlock
+                {
+                    Text = "Edit Event Details",
+                    FontSize = 20,
+                    FontWeight = FontWeights.Bold,
+                    Margin = new Thickness(0, 0, 0, 20)
+                };
+                Grid.SetRow(title, 0);
+                grid.Children.Add(title);
+
+                // Form
+                var formStack = new StackPanel();
+                Grid.SetRow(formStack, 1);
+
+                var txtEditName = CreateLabeledTextBox("Event Name:", evt.EventName);
+                var txtEditDescription = CreateLabeledTextBox("Description:", evt.Description);
+                var dpEditDate = CreateLabeledDatePicker("Event Date:", evt.EventDate);
+                var txtEditCapacity = CreateLabeledTextBox("Capacity:", evt.Capacity.ToString());
+                var txtEditPrice = CreateLabeledTextBox("Ticket Price:", evt.TicketPrice.ToString());
+                var chkEditActive = CreateLabeledCheckBox("Active:", evt.IsActive);
+
+                formStack.Children.Add(txtEditName);
+                formStack.Children.Add(txtEditDescription);
+                formStack.Children.Add(dpEditDate);
+                formStack.Children.Add(txtEditCapacity);
+                formStack.Children.Add(txtEditPrice);
+                formStack.Children.Add(chkEditActive);
+
+                grid.Children.Add(formStack);
+
+                // Buttons
+                var buttonPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    HorizontalAlignment = HorizontalAlignment.Right,
+                    Margin = new Thickness(0, 20, 0, 0)
+                };
+                Grid.SetRow(buttonPanel, 2);
+
+                var btnSave = new Button
+                {
+                    Content = "Save Changes",
+                    Width = 120,
+                    Height = 35,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    Background = new SolidColorBrush(Color.FromRgb(52, 152, 219)),
+                    Foreground = Brushes.White,
+                    BorderThickness = new Thickness(0),
+                    Cursor = System.Windows.Input.Cursors.Hand
+                };
+
+                var btnCancel = new Button
+                {
+                    Content = "Cancel",
+                    Width = 100,
+                    Height = 35,
+                    Background = new SolidColorBrush(Color.FromRgb(149, 165, 166)),
+                    Foreground = Brushes.White,
+                    BorderThickness = new Thickness(0),
+                    Cursor = System.Windows.Input.Cursors.Hand
+                };
+
+                btnSave.Click += async (s, args) =>
+                {
+                    try
+                    {
+                        evt.EventName = ((TextBox)txtEditName.Children[1]).Text;
+                        evt.Description = ((TextBox)txtEditDescription.Children[1]).Text;
+                        evt.EventDate = ((DatePicker)dpEditDate.Children[1]).SelectedDate.Value;
+                        evt.Capacity = int.Parse(((TextBox)txtEditCapacity.Children[1]).Text);
+                        evt.TicketPrice = decimal.Parse(((TextBox)txtEditPrice.Children[1]).Text);
+                        evt.IsActive = ((CheckBox)chkEditActive.Children[1]).IsChecked.Value;
+
+                        bool success = await _dbService.UpdateEventAsync(eventId, evt);
+
+                        if (success)
+                        {
+                            MessageBox.Show("Event updated successfully!", "Success",
+                                MessageBoxButton.OK, MessageBoxImage.Information);
+                            editWindow.Close();
+                            LoadAdminEvents();
+                            LoadDashboardData();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Failed to update event.", "Error",
+                                MessageBoxButton.OK, MessageBoxImage.Error);
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show($"Error updating event: {ex.Message}", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                };
+
+                btnCancel.Click += (s, args) => editWindow.Close();
+
+                buttonPanel.Children.Add(btnSave);
+                buttonPanel.Children.Add(btnCancel);
+                grid.Children.Add(buttonPanel);
+
+                editWindow.Content = grid;
+                editWindow.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error editing event: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void btnDeleteEvent_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var button = sender as Button;
+                string eventId = button.Tag.ToString();
+
+                var result = MessageBox.Show("Are you sure you want to delete this event?\n\nThis action cannot be undone!",
+                    "Confirm Delete",
+                    MessageBoxButton.YesNo,
+                    MessageBoxImage.Warning);
+
+                if (result == MessageBoxResult.Yes)
+                {
+                    bool success = await _dbService.DeleteEventAsync(eventId);
+
+                    if (success)
+                    {
+                        MessageBox.Show("Event deleted successfully!", "Success",
+                            MessageBoxButton.OK, MessageBoxImage.Information);
+                        LoadAdminEvents();
+                        LoadDashboardData();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Failed to delete event.", "Error",
+                            MessageBoxButton.OK, MessageBoxImage.Error);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Error deleting event: {ex.Message}", "Error",
+                    MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        // Helper methods for edit dialog
+        private StackPanel CreateLabeledTextBox(string label, string value)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 15) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = label,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+            panel.Children.Add(new TextBox
+            {
+                Text = value,
+                Height = 35,
+                
+                FontSize = 14
+            });
+            return panel;
+        }
+
+        private StackPanel CreateLabeledDatePicker(string label, DateTime value)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 15) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = label,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+            panel.Children.Add(new DatePicker
+            {
+                SelectedDate = value,
+                Height = 35,
+                FontSize = 14
+            });
+            return panel;
+        }
+
+        private StackPanel CreateLabeledCheckBox(string label, bool isChecked)
+        {
+            var panel = new StackPanel { Margin = new Thickness(0, 0, 0, 15) };
+            panel.Children.Add(new TextBlock
+            {
+                Text = label,
+                FontWeight = FontWeights.SemiBold,
+                Margin = new Thickness(0, 0, 0, 5)
+            });
+            panel.Children.Add(new CheckBox
+            {
+                IsChecked = isChecked,
+                Content = "Event is active"
+            });
+            return panel;
         }
 
         // ==================== DASHBOARD ====================
@@ -184,14 +512,12 @@ namespace OnewheroVisitorManagement
         {
             try
             {
-                
                 string firstName = GetTextBoxValue(txtFirstName, "First Name");
                 string lastName = GetTextBoxValue(txtLastName, "Last Name");
                 string email = GetTextBoxValue(txtEmail, "Email");
                 string phone = GetTextBoxValue(txtPhone, "Phone");
                 string address = GetTextBoxValue(txtAddress, "Address");
 
-                
                 if (string.IsNullOrWhiteSpace(firstName) ||
                     string.IsNullOrWhiteSpace(lastName) ||
                     string.IsNullOrWhiteSpace(email))
@@ -201,7 +527,6 @@ namespace OnewheroVisitorManagement
                     return;
                 }
 
-                // Create visitor object
                 var visitor = new Visitor
                 {
                     FirstName = firstName,
@@ -212,14 +537,12 @@ namespace OnewheroVisitorManagement
                     Interests = new List<string>()
                 };
 
-                // Add interests
                 if (chkMuseum.IsChecked == true) visitor.Interests.Add("Museum");
                 if (chkKiwiHouse.IsChecked == true) visitor.Interests.Add("Kiwi House");
                 if (chkBirds.IsChecked == true) visitor.Interests.Add("Native Birds");
                 if (chkReptiles.IsChecked == true) visitor.Interests.Add("Reptiles");
                 if (chkMarae.IsChecked == true) visitor.Interests.Add("Marae");
 
-                // Save to database
                 string visitorId = await _dbService.AddVisitorAsync(visitor);
 
                 MessageBox.Show($"Visitor '{visitor.FirstName} {visitor.LastName}' registered successfully!",
@@ -227,13 +550,8 @@ namespace OnewheroVisitorManagement
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                
                 ClearVisitorForm();
-
-                
                 LoadVisitors();
-
-                // Update dashboard
                 LoadDashboardData();
             }
             catch (Exception ex)
@@ -289,13 +607,11 @@ namespace OnewheroVisitorManagement
         {
             try
             {
-                
                 string eventName = GetTextBoxValue(txtEventName, "Event Name");
                 string description = GetTextBoxValue(txtEventDescription, "Description");
                 string capacityStr = GetTextBoxValue(txtCapacity, "Capacity");
                 string ticketPriceStr = GetTextBoxValue(txtTicketPrice, "Ticket Price ($)");
 
-                
                 if (string.IsNullOrWhiteSpace(eventName) ||
                     dpEventDate.SelectedDate == null ||
                     cmbEventType.SelectedItem == null)
@@ -322,7 +638,6 @@ namespace OnewheroVisitorManagement
                     return;
                 }
 
-                // Create event object
                 var evt = new Event
                 {
                     EventName = eventName,
@@ -335,7 +650,6 @@ namespace OnewheroVisitorManagement
                     IsActive = true
                 };
 
-                // Save to database
                 string eventId = await _dbService.AddEventAsync(evt);
 
                 MessageBox.Show($"Event '{evt.EventName}' created successfully!",
@@ -343,13 +657,8 @@ namespace OnewheroVisitorManagement
                     MessageBoxButton.OK,
                     MessageBoxImage.Information);
 
-                // Clear form
                 ClearEventForm();
-
-                // Reload grid
                 LoadEvents();
-
-                // Update dashboard
                 LoadDashboardData();
             }
             catch (Exception ex)
@@ -395,12 +704,11 @@ namespace OnewheroVisitorManagement
             try
             {
                 var visitors = await _dbService.GetAllVisitorsAsync();
-                var events = await _dbService.GetAllEventsAsync(); 
+                var events = await _dbService.GetAllEventsAsync();
 
                 cmbVisitor.ItemsSource = visitors;
                 cmbEvent.ItemsSource = events;
 
-                
                 if (visitors.Count == 0)
                 {
                     MessageBox.Show("No visitors found! Please register visitors first in the Visitors section.",
@@ -458,7 +766,6 @@ namespace OnewheroVisitorManagement
         {
             try
             {
-                // Validation
                 if (cmbVisitor.SelectedItem == null || cmbEvent.SelectedItem == null)
                 {
                     MessageBox.Show("Please select both a visitor and an event",
@@ -479,7 +786,6 @@ namespace OnewheroVisitorManagement
                 var visitor = cmbVisitor.SelectedItem as Visitor;
                 var evt = cmbEvent.SelectedItem as Event;
 
-                // Check availability
                 if (evt.AvailableSeats < numTickets)
                 {
                     MessageBox.Show($"Not enough seats available!\nOnly {evt.AvailableSeats} seat(s) remaining.",
@@ -487,7 +793,6 @@ namespace OnewheroVisitorManagement
                     return;
                 }
 
-                // Create booking
                 var booking = new Booking
                 {
                     VisitorId = visitor.Id,
@@ -505,10 +810,7 @@ namespace OnewheroVisitorManagement
                         MessageBoxButton.OK,
                         MessageBoxImage.Information);
 
-                    // Clear form
                     ClearBookingForm();
-
-                    // Reload data
                     LoadBookings();
                     LoadEvents();
                     LoadDashboardData();
